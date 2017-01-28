@@ -39,7 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
  * variables.
  */
 
-@interface ASDisplayNode (Subclassing)
+@protocol ASInterfaceState;
+
+@interface ASDisplayNode (Subclassing) <ASInterfaceState>
 
 #pragma mark - Properties
 /** @name Properties */
@@ -497,6 +499,73 @@ NS_ASSUME_NONNULL_BEGIN
  * @discussion Subclasses can override this method to react to a trait collection change.
  */
 - (void)asyncTraitCollectionDidChange;
+
+@end
+
+@protocol ASInterfaceState <NSObject>
+@required
+
+/**
+ * @abstract Called whenever any bit in the ASInterfaceState bitfield is changed.
+ *
+ * @discussion Subclasses may use this to monitor when they become visible, should free cached data, and much more.
+ * @see ASInterfaceState
+ */
+- (void)interfaceStateDidChange:(ASInterfaceState)newState fromState:(ASInterfaceState)oldState ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the node becomes visible.
+ *
+ * @discussion Subclasses may use this to monitor when they become visible.
+ *
+ * @note This method is guaranteed to be called on main.
+ */
+- (void)didEnterVisibleState ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the node is no longer visible.
+ *
+ * @discussion Subclasses may use this to monitor when they are no longer visible.
+ *
+ * @note This method is guaranteed to be called on main.
+ */
+- (void)didExitVisibleState ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the the node has entered the display state.
+ *
+ * @discussion Subclasses may use this to monitor when a node should be rendering its content.
+ *
+ * @note This method is guaranteed to be called on main.
+ */
+- (void)didEnterDisplayState ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the the node has exited the display state.
+ *
+ * @discussion Subclasses may use this to monitor when a node should no longer be rendering its content.
+ *
+ * @note This method is guaranteed to be called on main.
+ */
+- (void)didExitDisplayState ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the the node has entered the preload state.
+ *
+ * @discussion Subclasses may use this to monitor data for a node should be preloaded, either from a local or remote source.
+ *
+ * @note This method is guaranteed to be called on main.
+ */
+- (void)didEnterPreloadState ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the the node has exited the preload state.
+ *
+ * @discussion Subclasses may use this to monitor whether preloading data for a node should be canceled.
+ *
+ * @note This method is guaranteed to be called on main.
+ */
+- (void)didExitPreloadState ASDISPLAYNODE_REQUIRES_SUPER;
 
 @end
 
